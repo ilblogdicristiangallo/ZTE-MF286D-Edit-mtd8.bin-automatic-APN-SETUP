@@ -158,3 +158,6 @@ nand write 0x84000000 0x1000000 0x800000</pre>
 After typing reset in the PuTTY serial terminal during the first boot sequence, press the hardware RESET button on the ZTE MF286D device.
 
 This step is required to ensure that the modified partitions are properly applied and loaded by the system during startup.
+
+# Visit My blog:
+www.ilblogdicristiangallo.com 
