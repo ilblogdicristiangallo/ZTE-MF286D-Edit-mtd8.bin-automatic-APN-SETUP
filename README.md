@@ -126,7 +126,19 @@ Clean everything
 Output final modified firmware
 
 # Screen USE
+<table>
+  <tr>
+    <td><img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screen-APN-mtd8.bin.png?raw=true" width="200"></td>
+    <td><img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screen-APN-mtd8.bin2.png?raw=true" width="200"></td>
+    <td><img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screen-APN-mtd8.bin3.png?raw=true" width="200"></td>
+  </tr>
 
+  <tr>
+    <td><img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screen-APN-mtd8.bin4.png?raw=true" width="200"></td>
+    <td><img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screen-APN-mtd8.bin5.png?raw=true" width="200"></td>
+    <td></td>
+  </tr>
+</table>
 
 # Install partition mtd8.bin SERIAL PORT: 
 Press ESC in the serial console using PuTTY at a baud rate of 115200 over the serial connection to interrupt the boot process.
