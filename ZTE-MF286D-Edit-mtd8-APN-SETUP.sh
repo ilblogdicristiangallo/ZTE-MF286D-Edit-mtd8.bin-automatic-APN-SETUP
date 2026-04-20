@@ -36,19 +36,37 @@ declare -a apn_list
 last_empty=false
 
 for i in $(seq 1 8); do
-    read -p "Enter APN_config$i: " input
+    echo ""
+    echo "Config slot $i"
 
-    if [ -z "$input" ]; then
+    read -r -p "APN Name: " name
+
+    if [ -z "$name" ]; then
         if [ "$last_empty" = true ]; then
             echo "[+] Double ENTER detected → stopping input..."
             break
         fi
         last_empty=true
-    else
-        last_empty=false
+        continue
     fi
 
-    apn_list[$i]="$input"
+    last_empty=false
+
+    read -r -p "APN: " apn
+
+    if [ -z "$apn" ]; then
+        last_empty=true
+        continue
+    fi
+
+    last_empty=false
+
+    # =========================
+    # ZTE APN FORMAT (FIXED)
+    # =========================
+    apn_string="${name}(\$)${apn}(\$)manual(\$)*99#(\$)(\$)(\$)(\$)IP(\$)auto(\$)(\$)auto(\$)(\$)"
+
+    apn_list[$i]="$apn_string"
 done
 
 echo "[+] Writing APNs into config file..."
@@ -62,7 +80,11 @@ for i in $(seq 1 8); do
     value="${apn_list[$i]}"
     value="${value:-}"
 
-    sed -i "s|^APN_config$i=.*|APN_config$i=$value|" "$CONFIG_FILE"
+    if grep -q "^APN_config$i=" "$CONFIG_FILE"; then
+        sed -i "s|^APN_config$i=.*|APN_config$i=$value|" "$CONFIG_FILE"
+    else
+        echo "APN_config$i=$value" >> "$CONFIG_FILE"
+    fi
 done
 
 echo "[+] APN configuration updated."
@@ -72,7 +94,7 @@ grep APN_config "$CONFIG_FILE"
 
 echo ""
 echo "[+] Press ENTER to continue and rebuild firmware..."
-read
+read -r
 
 # =========================
 # REBUILD SECTION
