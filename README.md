@@ -132,6 +132,46 @@ Output final modified firmware
 
 # Screenshots
 
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot1.png?raw=true">
+        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot1.png?raw=true" width="350">
+      </a><br>
+      <sub>Screenshot 1</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot2.png?raw=true">
+        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot2.png?raw=true" width="350">
+      </a><br>
+      <sub>Screenshot 2</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot3.png?raw=true">
+        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot3.png?raw=true" width="350">
+      </a><br>
+      <sub>Screenshot 3</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot4.png?raw=true">
+        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot4.png?raw=true" width="350">
+      </a><br>
+      <sub>Screenshot 4</sub>
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center">
+      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot5.png?raw=true">
+        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot5.png?raw=true" width="350">
+      </a><br>
+      <sub>Screenshot 5</sub>
+    </td>
+</table>
+
 # Flashing via Serial (MTD8 Partition)
 
 Connect via serial (PuTTY, 115200 baud)
