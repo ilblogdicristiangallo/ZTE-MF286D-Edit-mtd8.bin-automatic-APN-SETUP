@@ -61,11 +61,7 @@ for i in $(seq 1 8); do
 
     last_empty=false
 
-    # =========================
-    # ZTE APN FORMAT (FIXED)
-    # =========================
     apn_string="${name}(\$)${apn}(\$)manual(\$)*99#(\$)(\$)(\$)(\$)IP(\$)auto(\$)(\$)auto(\$)(\$)"
-
     apn_list[$i]="$apn_string"
 done
 
@@ -100,7 +96,9 @@ read -r
 # REBUILD SECTION
 # =========================
 
-cd "$EXTRACT_DIR"
+cd "$EXTRACT_DIR" || exit 1
+
+echo "[+] Entered extraction directory: $EXTRACT_DIR"
 
 if [ ! -d "cramfs-root" ]; then
     echo "[-] cramfs-root directory not found!"
@@ -118,27 +116,56 @@ if [ ! -f "0.cramfs" ]; then
     exit 1
 fi
 
-echo "[+] Merging filesystems..."
-cat 0.cramfs cramfs-root.cramfs > mtd8_edit.bin
+# =========================
+# MERGE + BINWALK
+# =========================
 
-echo "[+] Creating final firmware image..."
-dd if=mtd8_edit.bin of=mtd8_newfile.bin bs=1 skip=4804608 status=progress
+echo "[+] Merging filesystems (NEW ORDER)..."
+cat cramfs-root.cramfs 0.cramfs > mtd8_edit.bin
+
+echo ""
+echo "[+] Analyzing merged firmware with binwalk..."
+echo "---------------------------------------------"
+binwalk mtd8_edit.bin
+echo "---------------------------------------------"
+
+echo ""
+echo "[+] Take the DECIMAL offset of the second partition."
+echo "[+] That value will be used as SKIP."
+echo ""
+
+read -r -p "Enter skip value (bytes): " SKIP_VALUE
+
+if ! [[ "$SKIP_VALUE" =~ ^[0-9]+$ ]]; then
+    echo "[-] Invalid number!"
+    exit 1
+fi
+
+# =========================
+# FINAL BUILD
+# =========================
+
+echo "[+] Creating final firmware image with skip=$SKIP_VALUE ..."
+dd if=mtd8_edit.bin of=mtd8_newfile.bin bs=1 skip="$SKIP_VALUE" status=progress
+
+echo ""
+echo "[+] Verifying final firmware with binwalk..."
+echo "---------------------------------------------"
+binwalk mtd8_newfile.bin
+echo "---------------------------------------------"
 
 echo "[+] Copying final file to Desktop..."
 cp mtd8_newfile.bin "$DESKTOP/"
 
 # =========================
-# CLEANUP SECTION (FULL)
+# CLEANUP
 # =========================
 
 echo "[+] Cleaning all temporary files..."
 
 cd ..
 rm -rf "$EXTRACT_DIR"
-rm -f "$DESKTOP/mtd8_edit.bin"
-rm -f "$DESKTOP/cramfs-root.cramfs"
 
 echo ""
 echo "[✔] Operation completed!"
 echo "[✔] Final file ready: $DESKTOP/mtd8_newfile.bin"
-echo "[✔] All temporary files removed."
