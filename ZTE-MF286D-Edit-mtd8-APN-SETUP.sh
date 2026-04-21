@@ -130,7 +130,7 @@ binwalk mtd8_edit.bin
 echo "---------------------------------------------"
 
 echo ""
-echo "[+] Take the DECIMAL offset of the primary partition."
+echo "[+] Take the DECIMAL offset of the second partition."
 echo "[+] That value will be used as SKIP."
 echo ""
 
