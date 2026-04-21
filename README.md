@@ -1,184 +1,185 @@
-This script automates the extraction, modification, and rebuilding of a ZTE router firmware image (MTD8 partition), with a specific focus on editing APN configuration parameters inside the extracted filesystem.
+# ZTE MTD8 Firmware Editor – Automatic APN Setup
 
-It is intended for firmware analysis, customization, and testing purposes.
+This script automates the full workflow of:
 
-# How the Script Works
+firmware extraction
+APN configuration editing
+filesystem rebuilding
+firmware reconstruction
 
+It is designed for ZTE firmware analysis, customization, and testing, specifically targeting the MTD8 partition.
+
+How the Script Works
 1. Firmware Validation
 
-The script starts by checking if the firmware file exists:
+The script first checks if the required file exists:
 
-Input file: mtd8.bin
-If the file is missing, the script exits immediately.
+<pre>mtd8.bin</pre>
 
-This prevents any operation on invalid or missing input.
+If the file is missing, execution stops immediately.
+This prevents invalid operations or accidental misuse.
 
-2. Firmware Extraction
+# Firmware Extraction
 
-The firmware is unpacked using binwalk:
+The firmware is extracted using binwalk:
 
-Automatically detects embedded filesystems
-Extracts a CRAMFS filesystem
-Creates the working directory:
+detects embedded filesystems
+extracts the CRAMFS filesystem
+creates the working directory:
 
 <pre>_mtd8.bin.extracted/</pre>
 
-This directory contains the router’s Linux-based filesystem.
+This directory contains the router’s internal Linux filesystem.
 
-# Interactive APN Configuration Editor
+# Interactive APN Editor
 
-The script provides an interactive interface to configure APNs:
+The script includes an interactive interface to configure APNs.
 
-Supports up to 8 APN slots
-Firmware keys:
-
+It supports up to 8 APN slots:
 <pre>
 APN_config1=
 APN_config2=
 ...
 APN_config8=</pre>
 
-Input behavior:
-
+Input behavior
 Enter APNs one by one
-Press ENTER twice to exit input mode
-Empty values are allowed and will remain blank
+Press ENTER twice to stop input
+Empty values are allowed and preserved
 
-# Example:
-
+# Example
 <pre>
-APN_config1: internet.it
-APN_config2: web.ho-mobile.it
-APN_config3: iliad
-APN_config4:</pre>
+APN Name: TIM
+APN: internet.it
+
+APN Name: HO
+APN: web.ho-mobile.it
+
+APN Name: ILIAD
+APN: iliad
+
+(Press ENTER twice to exit)
+</pre>
 
 # Configuration Injection
 
-After input is completed, the script modifies:
+The script modifies:
 
 <pre>zteconfig/default_parameter</pre>
 
-Updates each APN_configX= entry using sed
-Preserves empty values (no deletion or corruption)
+It:
 
-This step updates the router’s default APN configuration.
+updates each APN_configX= entry
+uses sed for safe replacement
+preserves empty fields without corruption
+
+This directly updates the router’s default APN configuration
 
 # Filesystem Rebuild
 
-Once modifications are complete:
+After modification:
 
-The CRAMFS filesystem is rebuilt using:
+the filesystem is rebuilt using:
 
 <pre>mkcramfs</pre>
 
-The original extracted directory is removed to avoid conflicts
+the original extracted directory is removed
 
-This produces a valid embedded filesystem compatible with ZTE firmware.
+Result: a clean, valid filesystem ready to be embedded back into the firmware.
 
-# Firmware Reconstruction
+# Firmware Reconstruction (Advanced Step)
 
-The firmware image is rebuilt by combining:
+The firmware is rebuilt by combining:
 
-Original 0.cramfs
-Modified cramfs-root.cramfs
+original filesystem → 0.cramfs
+modified filesystem → cramfs-root.cramfs
+New merge order
 
-Output:
+<pre>cat cramfs-root.cramfs 0.cramfs > mtd8_edit.bin</pre>
 
-<pre>mtd8_edit.bin</pre>
+# Partition Analysis with binwalk
 
-This is the final modified firmware, ready for flashing or testing.
+Before finalizing, the script runs:
 
-The file is automatically copied to the user’s Desktop.
+<pre>binwalk mtd8_edit.bin
+</pre>
 
-Automatic Cleanup
+# Exaple output
 
-The script removes all temporary files:
+<pre>DECIMAL       HEXADECIMAL     DESCRIPTION
+---------------------------------------------------------
+0             0x0             CramFS filesystem ...
+4804608       0x494000        CramFS filesystem ...</pre>
 
-Extracted firmware directory
-Temporary CRAMFS files
-Intermediate build files
+# Manual SKIP Input
 
-# Final result:
+You must:
+
+👉 Copy the DECIMAL offset of the second partition
+
+Then enter it when prompted:
+
+<pre>Enter skip value (bytes):</pre>
+
+Why SKIP is Important
+
+The skip value is used to realign the firmware:
+
+<pre>dd if=mtd8_edit.bin of=mtd8_newfile.bin bs=1 skip=OFFSET</pre>
+
+# Final Verification
+
+The script automatically runs:
+
+<pre>binwalk mtd8_newfile.bin</pre>
+
+# Expected result:
+
+0    0x0    CramFS filesystem ...
+
+👉 This confirms the partition is correctly aligned.
+
+# Final Output
+
+The final firmware is saved to:
 
 <pre>~/Desktop/mtd8_newfile.bin</pre>
 
+# Automatic Cleanup
+
+The script removes:
+
+extracted firmware directory
+temporary files
+intermediate build artifacts
+
+# Quick Tutorial (Step-by-Step)
+Place mtd8.bin in the script directory
+Run:
+
+<pre>chmod +x ZTE-MF286D-Edit-mtd8-APN-SETUP.sh
+./ZTE-MF286D-Edit-mtd8-APN-SETUP.sh</pre>
+
+Enter APN values
+Press ENTER twice to finish
+Wait for binwalk output
+Copy the second partition offset
+Enter it when prompted
+Verify the final result
+
 # ⚠️ Important Notes
 This tool modifies low-level firmware structures
-
-Incorrect usage may brick the device
+Incorrect usage can brick your device
 
 Use only on:
 
-Devices you own
+devices you own
+test environments
+research purposes
 
-Test environments
+# Flashing via Serial (MTD8)
 
-Research purposes
-
-# Summary
-Extract firmware
-
-Edit APN settings
-
-Inject configuration into filesystem
-
-Rebuild filesystem
-
-Rebuild firmware image
-
-Clean temporary files
-
-Output final modified firmware
-
-# Screenshots
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot1.png?raw=true">
-        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot1.png?raw=true" width="350">
-      </a><br>
-      <sub>Screenshot 1</sub>
-    </td>
-    <td align="center">
-      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot2.png?raw=true">
-        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot2.png?raw=true" width="350">
-      </a><br>
-      <sub>Screenshot 2</sub>
-    </td>
-  </tr>
-
-  <tr>
-    <td align="center">
-      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot3.png?raw=true">
-        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot3.png?raw=true" width="350">
-      </a><br>
-      <sub>Screenshot 3</sub>
-    </td>
-    <td align="center">
-      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot4.png?raw=true">
-        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot4.png?raw=true" width="350">
-      </a><br>
-      <sub>Screenshot 4</sub>
-    </td>
-  </tr>
-
-  <tr>
-    <td align="center">
-      <a href="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot5.png?raw=true">
-        <img src="https://github.com/ilblogdicristiangallo/ZTE-MF286D-Edit-mtd8.bin-automatic-APN-SETUP/blob/main/ScreenShot-utility/Screenshot5.png?raw=true" width="350">
-      </a><br>
-      <sub>Screenshot 5</sub>
-    </td>
-</table>
-
-# Flashing via Serial (MTD8 Partition)
-
-Connect via serial (PuTTY, 115200 baud)
-Press ESC to interrupt boot
-Use TFTP (e.g. Tftpd64)
-
-Commands:
+Example commands:
 
 <pre>
 setenv ipaddr 192.168.32.1
@@ -188,16 +189,20 @@ tftp mtd8.bin
 nand erase 0x1000000 0x800000
 nand write 0x84000000 0x1000000 0x800000</pre>
 
-# Notes
+# First Boot Notes
 
 During the first boot:
 
-Type reset in the serial console
-Press the hardware RESET button on the device
+type reset in the serial console
+press the physical RESET button
 
-This ensures the modified firmware is correctly applied.
+This ensures the modified firmware is properly applied.
 
-# 🌐 More Info
-
-# Visit:
-👉 www.ilblogdicristiangallo.com
+# 📌 Summary
+Extract firmware
+Edit APN configuration
+Inject changes into filesystem
+Rebuild filesystem
+Rebuild firmware
+Manually control partition alignment
+Clean all temporary files
